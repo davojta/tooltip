@@ -12,6 +12,60 @@ var verticalPlaces = ['top', 'bottom'];
 
 var style = window.getComputedStyle;
 
+function type(val){
+  switch (toString.call(val)) {
+	case '[object Date]': return 'date';
+	case '[object RegExp]': return 'regexp';
+	case '[object Arguments]': return 'arguments';
+	case '[object Array]': return 'array';
+	case '[object Error]': return 'error';
+  }
+
+  if (val === null) return 'null';
+  if (val === undefined) return 'undefined';
+  if (val !== val) return 'nan';
+  if (val && val.nodeType === 1) return 'element';
+
+  return typeof val.valueOf();
+};
+
+
+function clone(obj){
+  switch (type(obj)) {
+	case 'object':
+	  var copy = {};
+	  for (var key in obj) {
+		if (obj.hasOwnProperty(key)) {
+		  copy[key] = clone(obj[key]);
+		}
+	  }
+	  return copy;
+
+	case 'array':
+	  var copy = new Array(obj.length);
+	  for (var i = 0, l = obj.length; i < l; i++) {
+		copy[i] = clone(obj[i]);
+	  }
+	  return copy;
+
+	case 'regexp':
+	  // from millermedeiros/amd-utils - MIT
+	  var flags = '';
+	  flags += obj.multiline ? 'm' : '';
+	  flags += obj.global ? 'g' : '';
+	  flags += obj.ignoreCase ? 'i' : '';
+	  return new RegExp(obj.source, flags);
+
+	case 'date':
+	  return new Date(obj.getTime());
+
+	default: // string, number, boolean, …
+	  return obj;
+  }
+}
+
+
+var slice = [].slice;
 function extend(root) {
   var args = slice.call(arguments, 1);
   var deep = false;
