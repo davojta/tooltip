@@ -1,5 +1,5 @@
 var evt = require('event');
-var classes = require('classes');
+var classes = require('component-classes');
 var indexOf = require('indexof');
 var position = require('position');
 var parseNumber = require('parse-number');
