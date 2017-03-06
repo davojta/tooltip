@@ -11,12 +11,10 @@
 		"fuse": "ubergrape/fuse",
 		"raft": "ubergrape/raft",
 		"event": "ubergrape/event",
-		"extend": "ubergrape/extend",
 		"position": "ubergrape/position",
 		"parse-number": "ubergrape/parse-number",
-		"classes": "npmcomponent/component-classes",
-		"indexof": "npmcomponent/component-indexof",
-		"computed-style": "npmcomponent/jkroso-computed-style"
+		"component-classes": "npmcomponent/component-classes",
+		"component-indexof": "npmcomponent/component-indexof"
 	},
 	"devDependencies": {
 		"grunt-contrib-compress": "~0.5.3",

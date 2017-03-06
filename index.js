@@ -1,6 +1,4 @@
-var style = require('computed-style');
 var evt = require('event');
-var extend = require('extend');
 var classes = require('classes');
 var indexOf = require('indexof');
 var position = require('position');
@@ -11,6 +9,27 @@ var win = window;
 var doc = win.document;
 var body = doc.body;
 var verticalPlaces = ['top', 'bottom'];
+
+var style = window.getComputedStyle;
+
+function extend(root) {
+  var args = slice.call(arguments, 1);
+  var deep = false;
+  if (typeof root === 'boolean') {
+	deep = root;
+	root = args.shift();
+  }
+  for (var i = 0, l = args.length, source; source = args[i], i < l; i++) {
+	if (!source) continue;
+	for (var prop in source) {
+	  if (!deep || !source[prop]) root[prop] = source[prop];
+	  else if (type(root[prop]) === 'object' && type(source[prop]) === 'object')
+		root[prop] = extend(true, root[prop], clone(source[prop]));
+	  else root[prop] = clone(source[prop]);
+	}
+  }
+  return root;
+}
 
 module.exports = Tooltip;
 
