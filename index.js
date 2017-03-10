@@ -178,7 +178,10 @@ Tooltip.prototype.updateSize = function () {
 		? this.options.spacing
 		: parseNumber(style(this.element).top);
 	if (this.hidden) {
-		body.removeChild(this.element);
+		if (!this.options.leaveInDom) {
+			body.removeChild(this.element);
+		}
+
 		this.element.style.visibility = '';
 	} else {
 		this.position();
@@ -330,55 +333,55 @@ Tooltip.prototype.position = function (x, y) {
 	var top, left;
 	switch (this.curPlace) {
 		case 'top':
-			top = target.top - this.height - spacing;
+			top = target.top - this.height - spacing[1];
 			left = target.left + target.width / 2 - this.width / 2;
 			break;
 		case 'top-left':
-			top = target.top - this.height - spacing;
-			left = target.right - this.width;
+			top = target.top - this.height - spacing[1] ;
+			left = target.right - this.width - spacing[0];
 			break;
 		case 'top-right':
-			top = target.top - this.height - spacing;
-			left = target.left;
+			top = target.top - this.height - spacing[1];
+			left = target.left + spacing[0];
 			break;
 
 		case 'bottom':
-			top = target.bottom + spacing;
+			top = target.bottom + spacing[1];
 			left = target.left + target.width / 2 - this.width / 2;
 			break;
 		case 'bottom-left':
-			top = target.bottom + spacing;
-			left = target.right - this.width;
+			top = target.bottom + spacing[1];
+			left = target.right - this.width - spacing[0];
 			break;
 		case 'bottom-right':
-			top = target.bottom + spacing;
-			left = target.left;
+			top = target.bottom + spacing[1];
+			left = target.left + spacing[0];
 			break;
 
 		case 'left':
 			top = target.top + target.height / 2 - this.height / 2;
-			left = target.left - this.width - spacing;
+			left = target.left - this.width - spacing[0];
 			break;
 		case 'left-top':
-			top = target.bottom - this.height;
-			left = target.left - this.width - spacing;
+			top = target.bottom - this.height - spacing[1];
+			left = target.left - this.width - spacing[0];
 			break;
 		case 'left-bottom':
-			top = target.top;
-			left = target.left - this.width - spacing;
+			top = target.top + spacing[1];
+			left = target.left - this.width - spacing[0];
 			break;
 
 		case 'right':
 			top = target.top + target.height / 2 - this.height / 2;
-			left = target.right + spacing;
+			left = target.right + spacing[0];
 			break;
 		case 'right-top':
-			top = target.bottom - this.height;
-			left = target.right + spacing;
+			top = target.bottom - this.height - spacing[1];
+			left = target.right + spacing[0];
 			break;
 		case 'right-bottom':
-			top = target.top;
-			left = target.right + spacing;
+			top = target.top + spacing[1];
+			left = target.right + spacing[0];
 			break;
 	}
 
@@ -397,6 +400,7 @@ Tooltip.prototype.position = function (x, y) {
 Tooltip.prototype.show = function () {
 	// Clear potential ongoing animation
 	clearTimeout(this.aIndex);
+    this.aIndex = 0;
 
 	// Position the element when needed
 	if (this.attachedTo) this.position(this.attachedTo);
@@ -404,7 +408,14 @@ Tooltip.prototype.show = function () {
 	// Stop here if tip is already visible
 	if (this.hidden) {
 		this.hidden = false;
-		body.appendChild(this.element);
+
+		var leaveInDom = this.options.leaveInDom;
+		if (!leaveInDom && !self.attachedToBody) {
+			body.appendChild(this.element);
+		} else {
+			this.element.style.display = 'block';
+			self.attachedToBody = true
+		}
 	}
 
 	// Make Tooltip aware of window resize
@@ -443,7 +454,13 @@ Tooltip.prototype.hide = function () {
 	clearTimeout(this.aIndex);
 	this.aIndex = setTimeout(function () {
 		self.aIndex = 0;
-		body.removeChild(self.element);
+		if (!self.options.leaveInDom) {
+			body.removeChild(self.element);
+		} else {
+			self.element.style.display = 'none';
+			self.attachedToBody = true;
+		}
+
 		self.hidden = true;
 	}, duration);
 
@@ -542,5 +559,6 @@ Tooltip.defaults = {
 	place:       'top',     // Default place.
 	spacing:     null,      // Gap between target and Tooltip.
 	interactive: false,     // Whether Tooltip should be interactive, or click through.
-	auto:        0          // Whether to automatically adjust place to fit into window.
+	auto:        0,         // Whether to automatically adjust place to fit into window.
+	leaveInDom:  true       // leave tooltip in dom when hide
 };
