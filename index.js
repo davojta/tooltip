@@ -263,28 +263,28 @@ Tooltip.prototype._pickPlace = function (target) {
 	var spacing = this.spacing;
 
 	if (~indexOf(verticalPlaces, place[0])) {
-		if (target.top - this.height - spacing <= winPos.top) place[0] = 'bottom';
-		else if (target.bottom + this.height + spacing >= winPos.bottom) place[0] = 'top';
+		if (target.top - this.height - spacing[1] <= winPos.top) place[0] = 'bottom';
+		else if (target.bottom + this.height + spacing[1] >= winPos.bottom) place[0] = 'top';
 		switch (place[1]) {
 			case 'left':
-				if (target.right - this.width <= winPos.left) place[1] = 'right';
+				if (target.right - this.width - spacing[0] <= winPos.left) place[1] = 'right';
 				break;
 			case 'right':
-				if (target.left + this.width >= winPos.right) place[1] = 'left';
+				if (target.left + this.width + spacing[0] >= winPos.right) place[1] = 'left';
 				break;
 			default:
 				if (target.left + target.width / 2 + this.width / 2 >= winPos.right) place[1] = 'left';
 				else if (target.right - target.width / 2 - this.width / 2 <= winPos.left) place[1] = 'right';
 		}
 	} else {
-		if (target.left - this.width - spacing <= winPos.left) place[0] = 'right';
-		else if (target.right + this.width + spacing >= winPos.right) place[0] = 'left';
+		if (target.left - this.width - spacing[0] <= winPos.left) place[0] = 'right';
+		else if (target.right + this.width + spacing[0] >= winPos.right) place[0] = 'left';
 		switch (place[1]) {
 			case 'top':
-				if (target.bottom - this.height <= winPos.top) place[1] = 'bottom';
+				if (target.bottom - this.height - spacing[1] <= winPos.top) place[1] = 'bottom';
 				break;
 			case 'bottom':
-				if (target.top + this.height >= winPos.bottom) place[1] = 'top';
+				if (target.top + this.height + spacing[1] >= winPos.bottom) place[1] = 'top';
 				break;
 			default:
 				if (target.top + target.height / 2 + this.height / 2 >= winPos.bottom) place[1] = 'top';
